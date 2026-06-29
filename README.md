@@ -1,6 +1,21 @@
 # AgentScope 2.0 + AG-UI Scaffold
 
-一个可运行、可二开的脚手架：后端用 **AgentScope 2.0 原生 agent** 提供标准 **`POST /ag-ui`** 入口，前端用 `@ag-ui/client` + `@assistant-ui/react-ag-ui` 直接消费 AG-UI 事件流。
+The minimal native AgentScope 2.0 + AG-UI scaffold for building assistant-ui apps.
+
+一个可运行、可二开的脚手架。后端用 **AgentScope 2.0 原生 agent** 提供标准 **`POST /ag-ui`** 入口，前端用 `@ag-ui/client` 和 `@assistant-ui/react-ag-ui` 直接消费 AG-UI 事件流。它只保留搭建智能助手应用最常用的主干：profile 选择、工具目录、写工具确认、链路追踪和可替换的配置入口。
+
+## 快速启动
+
+```bash
+make backend-install
+export DASHSCOPE_API_KEY=<your-api-key>
+make frontend-install
+make frontend-build
+make backend-run
+make frontend-dev
+```
+
+后端默认运行在 <http://localhost:8000>，前端默认运行在 <http://localhost:5173>。健康检查：`curl http://localhost:8000/healthz`。
 
 ## 架构
 
@@ -35,19 +50,6 @@ agentscope-agui-scaffold/
 ├── backend/config/scaffold.toml          # 单一配置入口（profiles / tools / model / observability）
 └── frontend/                             # assistant-ui 工作台（manifest 驱动）
 ```
-
-## 快速启动
-
-```bash
-make backend-install
-export DASHSCOPE_API_KEY=<your-api-key>  # 模型 key（必需）
-make frontend-install
-make frontend-build
-make backend-run                    # http://localhost:8000
-make frontend-dev                   # http://localhost:5173
-```
-
-健康检查：`curl http://localhost:8000/healthz`（缺 key 时返回 `degraded` 与原因）。
 
 ## 配置
 
@@ -120,8 +122,8 @@ cd backend
 巡检报告（存 `.patrol_reports/`，gitignore）含：流量分桶（真实 vs 测试噪声）、链路完整性自检、异常 run、结论 + 评价 + 优化建议、真实会话问答（脱敏）。**只读、不打印凭据、下钻默认脱敏。**
 
 **现状边界（诚实）：**
-- **单会话逐字现场下钻是降级的** —— 脚手架请求间无状态、不往 Redis 写 `AgentState`，故 `patrol_session` 下钻会落到「找不到 → 回落 SLS 脱敏文本」。发现/聚合不受影响；要逐字现场，业务侧需补一层 Redis 会话持久化（键前缀走 `redis_session_prefix`，连接走 `redis_url`，接好即可用）。
-- **`user_id` 当前为全局默认值** —— `agui_runtime` 给所有请求用 `agui_default_user_id`。要做「谁问的」级别隔离/巡检，业务需从 `forwardedProps`/鉴权取真实 user 塞进 `RunContext`。
+- **单会话逐字现场下钻是降级的**，脚手架请求间无状态、不往 Redis 写 `AgentState`，故 `patrol_session` 下钻会落到「找不到 → 回落 SLS 脱敏文本」。发现/聚合不受影响；要逐字现场，业务侧需补一层 Redis 会话持久化（键前缀走 `redis_session_prefix`，连接走 `redis_url`，接好即可用）。
+- **`user_id` 当前为全局默认值**，`agui_runtime` 给所有请求用 `agui_default_user_id`。要做「谁问的」级别隔离/巡检，业务需从 `forwardedProps`/鉴权取真实 user 塞进 `RunContext`。
 
 ## 已知约束（默认关闭）
 
@@ -134,7 +136,7 @@ cd backend
 
 ## 交付清理
 
-`.gitignore` 已排除 `.env`、`.venv/`、`.agentscope-service/`、`.workspaces/`、`dist/`、`node_modules/`、Python 缓存，以及可观测性运行态产物（`.observability/` 本地 trace、`.patrol_reports/` 巡检报告、`.patrol_watermark.json` 水位线 —— 下钻含脱敏 PII，只留本地）。清理运行态：
+`.gitignore` 已排除 `.env`、`.venv/`、`.agentscope-service/`、`.workspaces/`、`dist/`、`node_modules/`、Python 缓存，以及可观测性运行态产物（`.observability/` 本地 trace、`.patrol_reports/` 巡检报告、`.patrol_watermark.json` 水位线，下钻含脱敏 PII，只留本地）。清理运行态：
 
 ```bash
 make clean-runtime
