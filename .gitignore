@@ -1,0 +1,24 @@
+.DS_Store
+.env
+.env.local
+.omx/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+docs/
+
+node_modules/
+dist/
+*.tsbuildinfo
+
+backend/.agentscope-service/
+backend/.workspaces/
+redis-data/
+
+# Observability: local trace durability + patrol artifacts (drills hold PII).
+backend/.observability/
+backend/.patrol_reports/
+backend/.patrol_watermark.json

@@ -1,0 +1,81 @@
+[app]
+name = "AgentScope AG-UI Scaffold"
+version = "0.1.0"
+environment = "local"
+cors_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+suggestions = [
+  "用一句话介绍 AgentScope 2.0",
+  "用计算器算一下 (12 + 8) * 5",
+  "现在几点了？",
+]
+
+# Redis is an optional external dependency. The native /ag-ui path does not
+# require it; these fields are a configuration surface for diagnostics only.
+[redis]
+host = "localhost"
+port = 6379
+db = 0
+password = ""
+key_ttl_seconds = 0
+socket_timeout_seconds = 60.0
+# Prefix for AgentState session keys (used by the patrol session-drill tooling).
+session_prefix = "agentscope:session:"
+
+# Trace observability.
+# Capture hangs on AgentScope's native middleware hooks; records flow to the sinks
+# below. Local JSONL is always on as a durability floor; SLS is opt-in.
+[observability]
+enabled = true
+local_dir = "./.observability"
+
+# Aliyun SLS structured sink + patrol tooling. Keys come from env (SLS_ACCESS_KEY_ID
+# / SLS_ACCESS_KEY_SECRET) — do not commit credentials here.
+[sls]
+enabled = false
+endpoint = ""
+project = ""
+logstore = "agentscope-agui"
+topic = "agentscope-agui"
+
+[agui]
+default_user_id = "local-user"
+
+[runtime]
+default_agent = "default"
+
+[tools]
+# Write tools (is_read_only = false) trigger AgentScope confirmation events.
+# A profile may list a write tool, but it is only registered when this is true.
+enable_write_tools = false
+
+[model]
+credential_type = "openai_credential"
+name = "qwen3-max"
+api_key_env = "DASHSCOPE_API_KEY"
+base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+request_timeout_seconds = 60.0
+
+[model.parameters]
+max_tokens = 1280
+
+# Agent profiles are selectable from the frontend via forwardedProps.agentId.
+[agent_profiles.default]
+name = "通用助手"
+system_prompt = "你是一个实用、简洁的 AgentScope 2.0 学习助手。请用中文回答。"
+tools = ["calculator", "current_datetime", "knowledge_search", "list_notes"]
+reasoning = false
+max_iters = 20
+
+[agent_profiles.research]
+name = "检索助手"
+system_prompt = "你擅长用知识检索工具回答 AgentScope 相关问题，先检索再作答。"
+tools = ["knowledge_search", "current_datetime"]
+reasoning = false
+max_iters = 30
+
+[agent_profiles.tool-heavy]
+name = "工具型助手"
+system_prompt = "你会主动调用工具来完成任务。需要写入时请说明原因。"
+tools = ["calculator", "current_datetime", "knowledge_search", "list_notes", "remember_note"]
+reasoning = false
+max_iters = 20

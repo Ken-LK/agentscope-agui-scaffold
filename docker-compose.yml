@@ -1,0 +1,22 @@
+# Optional self-orchestration of the scaffold application (backend + frontend).
+# This is an example only. External dependencies (model providers, and Redis /
+# vector stores if you add them) are configured via env / config, not started
+# here — the scaffold is not an environment-operations manual.
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Provide your model API key in the shell or an .env file.
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:-}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

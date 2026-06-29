@@ -1,0 +1,27 @@
+[project]
+name = "agentscope-agui-backend"
+version = "0.1.0"
+description = "AgentScope 2.0 native AG-UI scaffold (POST /ag-ui)."
+requires-python = ">=3.11,<3.13"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "agentscope[service,storage] @ git+https://github.com/agentscope-ai/agentscope.git@9bac81cb8330d08d11bda811de835260ec0467bf",
+  "fastapi",
+  "uvicorn[standard]",
+  "redis",
+  "socksio",
+]
+
+[project.urls]
+Homepage = "https://github.com/Ken-LK/agentscope-agui-scaffold"
+Repository = "https://github.com/Ken-LK/agentscope-agui-scaffold"
+Issues = "https://github.com/Ken-LK/agentscope-agui-scaffold/issues"
+
+[project.optional-dependencies]
+dev = [
+  "ruff",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
