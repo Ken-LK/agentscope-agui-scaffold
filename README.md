@@ -20,18 +20,25 @@ make frontend-dev
 ## 架构
 
 ```text
-assistant-ui thread
-  → @ag-ui/client HttpAgent  (POST /ag-ui, body = RunAgentInput, SSE)
-  → 薄 /ag-ui 入口            (app/runtime/agui_runtime.py)
-       → RunAgentInput → agentscope Msg
-       → agentscope.agent.Agent.reply_stream(...)        # 官方 agent，产出原生 AgentEvent
-       → AGUIProtocolMiddleware 转换器（逐事件 → AG-UI）  # 官方映射，零自研协议映射
-       → SSE 帧 data: {agui_event}\n\n
-  → assistant-ui 渲染
+assistant-ui
+  -> @ag-ui/client HttpAgent
+  -> POST /ag-ui
+  -> RunAgentInput
+  -> AgentScope Agent.reply_stream(...)
+  -> AGUIProtocolMiddleware
+  -> AG-UI SSE events
+  -> assistant-ui render
 ```
 
-- AG-UI 协议映射由 AgentScope 2.0 包内官方 `AGUIProtocolMiddleware` 的转换器承担，项目**不手写** AgentScope→AG-UI 映射。
-- 入口只负责：解析 `RunAgentInput`、驱动 agent、维护 run 信封（`RUN_STARTED/FINISHED/ERROR`，回显请求 `threadId/runId`）、SSE 封帧。
+| 层 | 职责 |
+| --- | --- |
+| `@ag-ui/client` | 发送标准 `RunAgentInput`，接收 SSE。 |
+| `/ag-ui` | 解析请求、驱动 agent、维护 run 信封。 |
+| AgentScope | 运行原生 `Agent.reply_stream(...)`。 |
+| `AGUIProtocolMiddleware` | 将 AgentScope 事件转换为 AG-UI 事件。 |
+| assistant-ui | 渲染消息、工具调用和确认卡片。 |
+
+项目不手写 AgentScope 到 AG-UI 的协议映射，只保留薄入口、run 信封和 SSE 封帧。
 
 > **路线说明：** 早期方案曾计划用 `agentscope-runtime` 的 `AGUIDefaultAdapter`。执行期实测发现该包**已废弃**且其 agentscope 桥接与 `agentscope==2.0.1` 的 message 模型不兼容，遂改为 **AgentScope 2.0 原生** 路线。
 
