@@ -3,9 +3,11 @@
 [![CI](https://github.com/Ken-LK/agentscope-agui-scaffold/actions/workflows/ci.yml/badge.svg)](https://github.com/Ken-LK/agentscope-agui-scaffold/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
+English | [简体中文](README.zh-CN.md)
+
 The minimal native AgentScope 2.0 + AG-UI scaffold for building assistant-ui apps.
 
-一个可运行、可二开的脚手架。后端用 **AgentScope 2.0 原生 agent** 提供标准 **`POST /ag-ui`** 入口，前端用 `@ag-ui/client` 和 `@assistant-ui/react-ag-ui` 直接消费 AG-UI 事件流。
+A runnable scaffold for building assistant-ui apps on top of native AgentScope 2.0 agents. The backend exposes the standard `POST /ag-ui` endpoint, and the frontend consumes AG-UI event streams through `@ag-ui/client` and `@assistant-ui/react-ag-ui`.
 
 ## Features
 
@@ -35,7 +37,7 @@ make frontend-dev
 
 Open <http://localhost:5173>. The backend runs on <http://localhost:8000>, and `curl http://localhost:8000/healthz` checks runtime health.
 
-Try asking:
+Try:
 
 ```text
 用计算器算一下 (12 + 8) * 5
