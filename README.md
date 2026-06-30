@@ -3,7 +3,7 @@
 [![CI](https://github.com/Ken-LK/agentscope-agui-scaffold/actions/workflows/ci.yml/badge.svg)](https://github.com/Ken-LK/agentscope-agui-scaffold/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-English | [简体中文](README.zh-CN.md)
+English | [Chinese](README.zh-CN.md)
 
 The minimal native AgentScope 2.0 + AG-UI scaffold for building assistant-ui apps.
 
@@ -40,7 +40,7 @@ Open <http://localhost:5173>. The backend runs on <http://localhost:8000>, and `
 Try:
 
 ```text
-用计算器算一下 (12 + 8) * 5
+Use the calculator to compute (12 + 8) * 5
 ```
 
 ## Architecture
